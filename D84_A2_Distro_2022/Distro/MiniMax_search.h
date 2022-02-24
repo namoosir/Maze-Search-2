@@ -36,6 +36,15 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses);
 // If you need to add any function prototypes yourself, you can do so *below* this line.
 
+double index_val[2];
+void set_index_val_min(double first, double second, double third, double fourth);
+void set_index_val_max(double first, double second, double third, double fourth);
+
+#define INF graph_size+1
+//This function was an edit on code from https://www.programiz.com/dsa/floyd-warshall-algorithm
+void shortest_paths(double gr[graph_size][4]);
+int shortest_matrix[graph_size][graph_size];
+
 
 #endif
 

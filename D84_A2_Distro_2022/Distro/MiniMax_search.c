@@ -154,11 +154,193 @@ double MiniMax(double gr[graph_size][4], int path[1][2], double minmax_cost[size
  ********************************************************************************************************/
 
  // Stub so that the code compiles/runs - This will be removed and replaced by your code!
+ static int called;
+ if (!called)
+	 shortest_paths(gr);
+ called = 1;
+ int cat_index;
+ int mouse_index = mouse_loc[0][0] + mouse_loc[0][1]*size_X;
+ int new_cat_loc[10][2];
+ int new_mouse_loc[1][2];
 
- path[0][0]=mouse_loc[0][0];
- path[0][1]=mouse_loc[0][1];
+ for(int i; i<cats; i++){
+	 new_cat_loc[i][0] = cat_loc[i][0];
+	 new_cat_loc[i][1] = cat_loc[i][1];
+ }
+ 
+ new_mouse_loc[0][0] = mouse_loc[0][0];
+ new_mouse_loc[0][1] = mouse_loc[0][1];
 
- return(0.0);
+double up,right,down,left;
+
+ if (mode == 0) {
+	 if (depth == maxDepth || checkForTerminal(mouse_loc, cat_loc, cheese_loc, cats, cheeses)) {
+		 double u = utility(cat_loc, cheese_loc, mouse_loc, cats, cheeses, depth, gr);
+		 return u;
+	 }
+
+	 for (int i = 0; i<4; i++){
+		 if (agentId == 0) {
+			if (gr[mouse_index][i]) {
+				if (i==0) {
+					//up
+					new_mouse_loc[0][1]--;
+					up = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					new_mouse_loc[0][1]++;
+				} else if (i == 1) {
+					//right
+					new_mouse_loc[0][0]++;
+					right = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					new_mouse_loc[0][0]--;
+				} else if (i == 2) {
+					//down
+					new_mouse_loc[0][1]++;
+					down = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					new_mouse_loc[0][1]--;
+				} else if (i == 3) {
+					//left
+					new_mouse_loc[0][0]--;
+					left = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					new_mouse_loc[0][0]++;
+				}
+			} else {
+				if (i==0) {
+					up = -1000000000;
+				} else if (i==1) {
+					right = -1000000000;
+				} else if (i==2) {
+					down = -1000000000;
+				} else if (i==3) {
+					left = -1000000000;
+				}
+			}
+		 } else {
+			 cat_index = cat_loc[agentId - 1][0] + cat_loc[agentId - 1][1]*size_X;
+			 int new_agentId = agentId + 1;
+			 int new_depth = depth;
+
+			 if (new_agentId == cats + 1) {
+				 new_agentId = 0;
+				 new_depth ++;
+			 }
+			 if (gr[cat_index][i]) {
+				 if (i == 0) {
+					//up
+					new_cat_loc[agentId - 1][1]--;
+					up = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, new_agentId, new_depth, maxDepth, alpha, beta);
+					new_cat_loc[agentId - 1][1]++;
+				 } else if (i == 1) {
+					//right
+					new_cat_loc[agentId - 1][0]++;
+					right = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, new_agentId, new_depth, maxDepth, alpha, beta);
+					new_cat_loc[agentId - 1][0]--;
+				 } else if (i == 2) {
+					//down
+					new_cat_loc[agentId - 1][1]++;
+					down = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, new_agentId, new_depth, maxDepth, alpha, beta);
+					new_cat_loc[agentId - 1][1]--;
+				 } else if (i == 3) {
+					//left 
+					new_cat_loc[agentId - 1][0]--;
+					left = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, new_agentId, new_depth, maxDepth, alpha, beta);
+					new_cat_loc[agentId - 1][0]++;
+				 }
+			 }else {
+				if (i==0) {
+					up = 1000000000;
+				} else if (i==1) {
+					right = 1000000000;
+				} else if (i==2) {
+					down = 1000000000;
+				} else if (i==3) {
+					left = 1000000000;
+				}
+			}
+		 }
+	 }
+
+	 if (agentId == 0) {
+		set_index_val_max(up, right, down, left);
+		if (index_val[0] == 0) {
+			path[0][0] = mouse_loc[0][0];
+			path[0][1] = mouse_loc[0][1] - 1;
+		} else if (index_val[0] == 1) {
+			path[0][0] = mouse_loc[0][0] + 1;
+			path[0][1] = mouse_loc[0][1];
+		} else if (index_val[0] == 2) {
+			path[0][0] = mouse_loc[0][0];
+			path[0][1] = mouse_loc[0][1] + 1;
+		} else if (index_val[0] == 3) {
+			path[0][0] = mouse_loc[0][0] - 1;
+			path[0][1] = mouse_loc[0][1];
+		}
+	 } else {
+		set_index_val_min(up, right, down, left);
+		if (index_val[0] == 0) {
+			path[0][0] = cat_loc[agentId - 1][0];
+			path[0][1] = cat_loc[agentId - 1][1] - 1;
+		} else if (index_val[0] == 1) {
+			path[0][0] = cat_loc[agentId - 1][0] + 1;
+			path[0][1] = cat_loc[agentId - 1][1];
+		} else if (index_val[0] == 2) {
+			path[0][0] = cat_loc[agentId - 1][0];
+			path[0][1] = cat_loc[agentId - 1][1] + 1;
+		} else if (index_val[0] == 3) {
+			path[0][0] = cat_loc[agentId - 1][0] - 1;
+			path[0][1] = cat_loc[agentId - 1][1];
+		}
+	 }
+
+	if(agentId == 0) {
+		minmax_cost[path[0][0]][path[0][1]] = index_val[1];
+	}
+
+	//printf("%f\n", index_val[1]);
+
+	return index_val[1];
+
+ } else if (mode == 1) {
+
+ }
+
+}
+
+void set_index_val_max(double first, double second, double third, double fourth) {
+	if(first >= second && first >= third && first >= fourth){
+		index_val[0] = 0;
+		index_val[1] = first;
+	}
+	if(second >= first && second >= third && second >= fourth){
+		index_val[0] = 1;
+		index_val[1] = second;
+	}
+	if(third >= first && third >= second && third >= fourth){
+		index_val[0] = 2;
+		index_val[1] = third;
+	}
+	if(fourth >= first && fourth >= second && fourth >= third){
+		index_val[0] = 3;
+		index_val[1] = fourth;
+	}
+}
+
+void set_index_val_min(double first, double second, double third, double fourth) {
+	if(first <= second && first <= third && first <= fourth){
+		index_val[0] = 0;
+		index_val[1] = first;
+	}
+	if(second <= first && second <= third && second <= fourth){
+		index_val[0] = 1;
+		index_val[1] = second;
+	}
+	if(third <= first && third <= second && third <= fourth){
+		index_val[0] = 2;
+		index_val[1] = third;
+	}
+	if(fourth <= first && fourth <= second && fourth <= third){
+		index_val[0] = 3;
+		index_val[1] = fourth;
+	}
 }
 
 double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], int cats, int cheeses, int depth, double gr[graph_size][4])
@@ -183,8 +365,47 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 
 		These arguments are as described in A1. Do have a look at your solution!
  */
+ 	int target_cheese = 0;
+	int cur_cat_loc = 0;
+	int cur_cheese_loc = 0;
+	int cheese_mouse_value[cheeses];
+	int mouse_location = mouse_loc[0][0] + mouse_loc[0][1]*size_X;
 
- return(1);   // <--- Obviously, this will be replaced by your computer utilities
+	for(int i = 0; i < cheeses; i++){
+		for(int j = 0; j < cats; j++) {
+			cur_cheese_loc = cheese_loc[i][0] + cheese_loc[i][1]*size_X;
+			cur_cat_loc = cat_loc[j][0] + cat_loc[j][1]*size_X;
+			cheese_mouse_value[i] += shortest_matrix[cur_cheese_loc][cur_cat_loc];
+		}
+		cheese_mouse_value[i] += (graph_size+1)/(shortest_matrix[cur_cheese_loc][mouse_location]+1);
+	}
+
+	int max = -1;
+	for(int i = 0; i < cheeses; i++){
+		cur_cheese_loc = cheese_loc[i][0] + cheese_loc[i][1]*size_X;
+		if(cheese_mouse_value[i] > max){
+			max = cheese_mouse_value[i];
+			target_cheese = cur_cheese_loc;
+		}
+	}
+
+	int mouse_to_cheese = shortest_matrix[mouse_location][target_cheese];
+
+	int distance_from_cats = 0;
+	for(int i = 0; i < cats; i++){
+		cur_cat_loc = cat_loc[i][0] + cat_loc[i][1]*size_X;
+		distance_from_cats += shortest_matrix[mouse_location][cur_cat_loc];
+	}
+
+	int min_distance_from_cats = INF;
+	for(int i = 0; i < cats; i++){
+		cur_cat_loc = cat_loc[i][0] + cat_loc[i][1]*size_X;
+		if(shortest_matrix[mouse_location][cur_cat_loc] < min_distance_from_cats)
+			min_distance_from_cats = shortest_matrix[mouse_location][cur_cat_loc];
+	}
+
+	return -(mouse_to_cheese + (graph_size*10)/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)));
+	
 }
 
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses)
@@ -210,4 +431,39 @@ int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2
  return(0);
 
 }
+
+//-------CODE FOR SHORTEST PATHS----REFRENCE FROM https://www.programiz.com/dsa/floyd-warshall-algorithm
+void shortest_paths(double gr[graph_size][4]){
+	int graph[graph_size][graph_size];
+
+    for(int i = 0; i < graph_size; i++){
+        for(int j = 0; j < graph_size; j++){
+            graph[i][j] = INF;
+        }
+    }
+
+	for(int i = 0; i < graph_size; i++){
+        if(gr[i][1]) graph[i][i+1] = 1;
+		if(gr[i][3]) graph[i][i-1] = 1;
+		if(gr[i][0]) graph[i][i-size_X] = 1;
+		if(gr[i][2]) graph[i][i+size_X] = 1;
+		graph[i][i] = 0;
+    }
+
+  int i, j, k;
+
+  for (i = 0; i < graph_size; i++)
+    for (j = 0; j < graph_size; j++)
+      shortest_matrix[i][j] = graph[i][j];
+
+  for (k = 0; k < graph_size; k++) {
+    for (i = 0; i < graph_size; i++) {
+      for (j = 0; j < graph_size; j++) {
+        if (shortest_matrix[i][k] + shortest_matrix[k][j] < shortest_matrix[i][j])
+          shortest_matrix[i][j] = shortest_matrix[i][k] + shortest_matrix[k][j];
+      }
+    }
+  }
+}
+//-----------DONE SHORTEST PATHS CODE---------
 
