@@ -181,9 +181,6 @@ double up,right,down,left;
 
 	 for (int i = 0; i<4; i++){
 		 if (agentId == 0) {
-			//  if(depth == 0){
-			// 	printf("test\n");
-			// }
 			if (gr[mouse_index][i]) {
 				if (i==0) {
 					//up
@@ -311,6 +308,7 @@ double up,right,down,left;
 					//up
 					new_mouse_loc[0][1]--;
 					up = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					minmax_cost[new_mouse_loc[0][0]][new_mouse_loc[0][1]] = up;
 					new_mouse_loc[0][1]++;
 
 					if (up > alpha) alpha = up;
@@ -318,6 +316,7 @@ double up,right,down,left;
 					//right
 					new_mouse_loc[0][0]++;
 					right = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					minmax_cost[new_mouse_loc[0][0]][new_mouse_loc[0][1]] = right;
 					new_mouse_loc[0][0]--;
 
 					if (right > alpha) alpha = right;
@@ -325,6 +324,7 @@ double up,right,down,left;
 					//down
 					new_mouse_loc[0][1]++;
 					down = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					minmax_cost[new_mouse_loc[0][0]][new_mouse_loc[0][1]] = down;
 					new_mouse_loc[0][1]--;
 
 					if (down > alpha) alpha = down;
@@ -332,6 +332,7 @@ double up,right,down,left;
 					//left
 					new_mouse_loc[0][0]--;
 					left = MiniMax(gr, path, minmax_cost, new_cat_loc, cats, cheese_loc, cheeses, new_mouse_loc, mode, utility, agentId + 1, depth + 1, maxDepth, alpha, beta);
+					minmax_cost[new_mouse_loc[0][0]][new_mouse_loc[0][1]] = left;
 					new_mouse_loc[0][0]++;
 
 					if (left > alpha) alpha = left;
@@ -538,16 +539,17 @@ double utility(int cat_loc[10][2], int cheese_loc[10][2], int mouse_loc[1][2], i
 			min_distance_from_cats = shortest_matrix[mouse_location][cur_cat_loc];
 	}
 
-	// if(fabs(((graph_size*10)/(mouse_to_cheese + 0.001) - (graph_size*10)/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)))) < 0.5){
+	// if(fabs((1/(mouse_to_cheese + 0.001) - 1/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)))) < 0.1){
 	// 	printf("00\n");
 	// }
 	// printf("%f\n",fabs(((graph_size*10)/(mouse_to_cheese + 0.001) - (graph_size*10)/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)))));
 
-	double value = ((graph_size*10)/(mouse_to_cheese + 0.001) - (graph_size*10)/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)));
-	if(value < -5000) value = -5000;
-	if(value > 5000) value = 5000;
-	return value;
+	// double value = ((graph_size*10)/(mouse_to_cheese + 0.001) - (graph_size*10)/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)));
+	// if(value < -5000) value = -5000;
+	// if(value > 5000) value = 5000;
+	// return value;
 	//return ((graph_size*10)/(mouse_to_cheese + 0.01) - (graph_size*10)/((min_distance_from_cats+0.01)));
+	return (1/(mouse_to_cheese + 0.001) - 1/((min_distance_from_cats+0.01)*(min_distance_from_cats+0.01)));
 }
 
 int checkForTerminal(int mouse_loc[1][2],int cat_loc[10][2],int cheese_loc[10][2],int cats,int cheeses)
