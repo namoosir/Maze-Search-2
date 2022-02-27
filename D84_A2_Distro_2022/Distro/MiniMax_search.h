@@ -45,6 +45,6 @@ void set_index_val_max(double first, double second, double third, double fourth)
 void shortest_paths(double gr[graph_size][4]);
 int shortest_matrix[graph_size][graph_size];
 
-
+int target_cheese;
 #endif
 
