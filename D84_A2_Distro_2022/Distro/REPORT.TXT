@@ -4,17 +4,17 @@ Assignment 2 - MiniMax and Game Trees
 
 ________________________________________________
 
-Student Name 1 (last, first):
+Student Name 1 (last, first): (Kharsa, Mutasem)
 
-Student Name 2 (last, first):
+Student Name 2 (last, first): (Saqeeb, Nazmus)
 
-Student number 1:
+Student number 1: 1006211083
 
-Student number 2:
+Student number 2: 1006306007
 
-UTORid 1:
+UTORid 1: kharsamu
 
-UTORid 2:
+UTORid 2: saqeebna
 
 READ THIS AND SIGN YOUR NAME AT THE END:
 
@@ -22,7 +22,7 @@ READ THIS AND SIGN YOUR NAME AT THE END:
 honesty and plaguarism. All work submitted as part
 of this assignment is my own.
 
-	Signed: _(student 1 name here)__	_(student 2 name here)__
+	Signed: _Mutasem Kharsa__	_Nazmus Saqeeb__
 
 
 (-5 marks for failing to provide the identifying
@@ -37,27 +37,99 @@ but explain carefully when needed.
      how their influence was evaluated and integrated into
      a single, meaningful value. Convince us that your utility
      makes sense!
+     
+     Our utility function has 5 factors to consider.
+     We first consider the distances from the mouse to 
+     the cheeses (cheese_summation). Cheese_summation is the
+     sum from the mouse to all cheeses. This values blows up
+     if we are on top of a cheese. Which gives the mouse
+     a reason to eat cheeses.
+     
+     We also take into consideration the number of walls around 
+     a given cheese. If there are 3 walls around the cheese, then 
+     we ignore it as going to eat it will surround us. If there are
+     two walls, then we give less preference to that cheese and so on.
+     The cheeses with 0 walls around them are the most preferable.
+
+     The next factor we have is the sum of the distances from the
+     mouse to the cats. We always check if the distance from any cat 
+     to the mouse is 0 (cat ate the mouse), and we return with a high 
+     negative value since the cats would win in that case. Otherwise, 
+     we simply sum the distances from the mouse to the cats.
+
+     Next we use the depth factor to avoid situations where there is
+     a cheese nearby, but the mouse to decides to move around and then
+     get the cheese instead of getting the cheese right away. We prefer
+     shorter paths to the cheese than longer ones.
+     
+     Lastly, we consider the number of moves possible for the mouse, 
+     i.e. how many walls surround the mouse. This value allows to see 
+     how cornered the mouse is, if we have more number of moves, this is
+     good as we have more chances of escaping.
+
+     Therefore, our final heurstic is cheese_summation - cats_summation - depth + num_moves_possible.
+     
 
 2 .- (2 marks) Ignoring computation time, what is the effect of
      search depth (number of turns) on the chances of the mouse
      winning the game. 
+     
+     The higher the search depth, the larger the chance of the 
+     mouse winning. This is because the mouse can plan more 
+     moves ahead, this allows us to see if making a move
+     brings the mouse closer to cats somewhere else on the board
+     and if moving in a different direction might be better.
 
 3 .- (2 marks) What situations will cause your mouse to lose?
      can these be fixed either with the utility function, or
      by changing the search depth? if so, how?
 
+     If there is a cheese that is surrounded by walls 
+     in a sort of hallway, then it will go to get the cheese
+     but it will die trying to leave. If the utility function can attempt
+     to get these sorts of cheeses early then it might be good
+     as the cats may have spawned further away. The utility function
+     can also leave these for last or simply not get them. In terms of depth,
+     having more depth can make us detect that this is a dead end
+     resuling in death, which can make the mouse avoid that cheese.
+
 4 .- (2 marks) Compare cats with smartness=.8 against cats with
      smartness=1 - which are harder for your mouse to beat?
      why do you think that is?
+     
+     Smartness=1 is harder for our mouse to beat since if 
+     smartness=.8, the cats are not always making the best move 
+     to chase us down and therefore we have more freedom to get 
+     cheeses that are in risky positions without dying such as dead
+     ends. This also means that we can win in situations where we 
+     would lose if the cats had a smartness of 1. With a smartness=1
+     we may be less likely to get surrounded since we pull away all 
+     the cats and they follow us in a line as we get different cheeses.
+     This may not be the case with smartness=0.8 and they may end up 
+     surrounding us. 
 
 5 .- (2 marks) Can the mouse be made unbeatable by having an
      optimal utility function?
+
+     No. For example if the cat is spawned in an area that only
+     has 1 or 2 exits, then the cats could block them and the mouse 
+     would not be able to get out. An optimal utility function
+     can only do the best possible, and cannot be sure of 
+     a win or tie. 
 
 6 .- (2 bonus marks) Could a human playing the game in place
       of the mouse do better than your code? (yes, no, and
       a reasonable explanation of why)
 
-_____________________________________________________
+      Yes. If someone was playing, they can see which cheeses
+      are in a dead end and the can decide if they have
+      enough time to go after the cheeses or if they have to
+      settle for a tie. A human can see the big picture of
+      the game. The code may be able to do better if it
+      has much more depth or a better utility function, 
+      but for our code a human can do better.
+
+____________________________________________________
 
 Mark with an 'x' where appropriate. If something is only
 working partially, briefly describe what works, what
@@ -66,11 +138,11 @@ doesn't work, or what problems exist.
 	Complete/Working	Partial		Not done
 
 Utility
- function
+ function      X
 
-MiniMax
+MiniMax        X
 
-Alpha/Beta
+Alpha/Beta     X
  pruning
 _____________________________________________________
 
@@ -93,7 +165,7 @@ Marking:
 
 (15 marks) Competitive (TA assigned) based on how smart
            your mouse is (this is related to your
-           utility function above!)
+           utility function above!)`
 
 (15 marks) Answers in this report file
 
